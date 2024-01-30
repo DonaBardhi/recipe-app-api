@@ -1,7 +1,10 @@
 ---
 name: Checks 
 
-on: [push] #This is the trigger
+on: 
+  push:
+    branches:
+      - main
 
 jobs: 
   test-lint:
