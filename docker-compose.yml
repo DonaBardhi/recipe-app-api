@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  #app is the name of our service, that is gonna run our docker fie
+  app:
+    #Its gonna build our Docker  file inside our current directory - (.) in context  
+    build: 
+      context: .
+      #Use the current directory from where weäre using our dockercompose from
+      args:
+        - DEV=true 
+        
+    ports:
+      - "8000-8000"     
+    volumes:
+      - ./app:/app
+    image: app:django 
+    container_name: my_container1
+
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
