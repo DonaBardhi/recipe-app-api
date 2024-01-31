@@ -1,19 +1,22 @@
 name: Checks
+#This line defines the event that triggers the workflow. In this case, the workflow is triggered on every push event to the repository.
 on: [push]
 
+#The jobs keyword starts the section where you define one or more jobs that will run as part of your workflow.
 jobs:
+  #his line specifies the name of the job. In this case, the job is named "test-lint."
   test-lint:
     name: Test and Lint
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.04 #the job will run on a GitHub-hosted runner with the Ubuntu 20.04 operating system.
     steps:
-      - name: Login to Docker Hub
+      - name: Login to Docker Hub  #This step logs in to Docker Hub using the docker/login-action GitHub Action. It uses the Docker Hub username and token stored in GitHub Secrets for authentication.
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USER }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Checkout
+      - name: Checkout #his step checks out your repository's code to the runner. It uses the actions/checkout GitHub Action.
         uses: actions/checkout@v2
-      - name: Test
+      - name: Test #This step runs a test command within a Docker container. It uses docker-compose run to execute the specified command (python manage.py test) within the app service defined in your docker-compose.yml file.
         run: docker-compose run --rm app sh -c "python manage.py test"
-      - name: Lint
+      - name: Lint #This step runs a linter command within a Docker container. It uses docker-compose run to execute the specified command (flake8) within the app service defined in your docker-compose.yml file.
         run: docker-compose run --rm app sh -c "flake8"
