@@ -26,7 +26,21 @@ ARG DEV=false
 
 #RUN  to run multiple commands (without creating an image layer for every single command if we would run them each separately) to keep our image lightweight. We separate commannds by && \. Use use venv in docker to avoid conflicts between python dependencies in our base image and python dependecies in our project.
 #The first command creates a new virtual env that we#re gonna need to store our dependencies.
+
+#RUN apk --no-cache add \
+    #postgresql-client \
+    #build-base \
+   # postgresql-dev \
+   # musl-dev
+
+
 RUN pip install --upgrade pip   && \
+    
+    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache --virtual  .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
+
+    
     #We install our requirements file inside the venv in our Docker Image.
     pip install -r /tmp/requirements.txt && \
     #Check if our DEV environment variable (build argument) is set to true then install requirements.dev.txt
@@ -36,6 +50,7 @@ RUN pip install --upgrade pip   && \
 
     #We remove the tmp directory. The reason we do this is becaouse we dont want any extra dependecies on our image once its beign created. Its best practice to keep our image as lightweight as possible. 
     rm -rf /tmp && \
+    apk del .tmp-build-deps && \
     #This command adds a new user inside our image. Its best practice not to use the root user (the only user available inside our image if we wouldnt specify a new one. It has full access and  permission  to do anything on the server.). For security purposes, if the app gets compromised, the user we created doesnt have full provileges.
     adduser -D -s /bin/bash django-user
         #We dont want to log in through a password, but by default when we run the app

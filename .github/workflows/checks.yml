@@ -17,6 +17,6 @@ jobs:
       - name: Checkout #his step checks out your repository's code to the runner. It uses the actions/checkout GitHub Action.
         uses: actions/checkout@v2
       - name: Test #This step runs a test command within a Docker container. It uses docker-compose run to execute the specified command (python manage.py test) within the app service defined in your docker-compose.yml file.
-        run: docker-compose run --rm app sh -c "python manage.py test"
+        run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
       - name: Lint #This step runs a linter command within a Docker container. It uses docker-compose run to execute the specified command (flake8) within the app service defined in your docker-compose.yml file.
         run: docker-compose run --rm app sh -c "flake8"
